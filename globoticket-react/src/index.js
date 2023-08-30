@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 import "./index.css";
 import App from "./App";
-import CartStore from "./CartStore";
+import ErrorStore from "./ErrorStore";
+
+const store = ErrorStore;
 
 ReactDOM.render(
     <React.StrictMode>
-        <Provider store={CartStore}>
+        <Provider store={store}>
             <App/>
         </Provider>
     </React.StrictMode>,

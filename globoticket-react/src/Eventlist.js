@@ -1,10 +1,18 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Eventitem from "./Eventitem";
 import useSWR from "swr";
 import {fetcher} from "./SwrHelper";
+import {useDispatch} from "react-redux";
 
 export default function Eventlist() {
-  const {isLoading, data: events} = useSWR("http://localhost:3333/events", fetcher);
+  const {error, data: events} = useSWR("http://localhost:3333/events", fetcher);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (error) {
+      dispatch({type: "ERROR_SET", error: error});
+    }
+  }, [error]);
 
   return (
     <div className="container" id="eventtable">
