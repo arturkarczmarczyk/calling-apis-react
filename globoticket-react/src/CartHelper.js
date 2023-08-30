@@ -1,17 +1,6 @@
 import UuidStore from "./UuidStore";
 import axios from "axios";
-
-async function _getCart() {
-    const response = await axios.get(
-        "http://localhost:3333/cart", {
-            headers: {
-                "X-SESSION-TOKEN": UuidStore.value
-            }
-        });
-
-    let cart = response.data;
-    return cart;
-}
+import {mutate} from "swr";
 
 export function addCart(id) {
     return async function addCartThunk(dispatch, getState) {
@@ -26,8 +15,7 @@ export function addCart(id) {
                     "X-SESSION-TOKEN": UuidStore.value
                 }
             });
-        let cart = await _getCart();
-        dispatch({type: "refresh", payload: cart});
+        mutate("http://localhost:3333/cart");
     }
 }
 
@@ -59,9 +47,7 @@ export function updateCart(id, quantity) {
                     }
                 });
         }
-
-        let cart = await _getCart();
-        dispatch({type: "refresh", payload: cart});
+        mutate("http://localhost:3333/cart");
     }
 }
 
@@ -79,8 +65,7 @@ export function deleteCart(id) {
                 }
             });
 
-        let cart = await _getCart();
-        dispatch({type: "refresh", payload: cart});
+        mutate("http://localhost:3333/cart");
     }
 }
 
@@ -95,7 +80,6 @@ export function clearCart() {
                 }
             });
 
-        let cart = await _getCart();
-        dispatch({type: "refresh", payload: cart});
+        mutate("http://localhost:3333/cart");
     }
 }

@@ -1,20 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {NavLink} from "react-router-dom";
-import CartStore from "./CartStore";
+import {useCart} from "./SwrHelper";
 
 export default function Header() {
 
-    const [itemCount, setItemCount] = useState(0);
-
-    useEffect(() => {
-        CartStore.subscribe(() => {
-            const state = CartStore.getState();
-            if (state) {
-                const itemCount = state.cart.map(item => item.quantity).reduce((p, n) => p + n, 0);
-                setItemCount(itemCount);
-            }
-        });
-    }, []);
+    const { cart, isLoading} = useCart();
+    const itemCount = !isLoading && cart ? cart.map(item => item.quantity).reduce((p, n) => p + n, 0) : 0;
 
     return (
         <nav className="navbar navbar-expand navbar-dark fixed-top bg-dark">

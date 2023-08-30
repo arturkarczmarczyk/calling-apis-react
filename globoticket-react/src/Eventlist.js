@@ -1,14 +1,10 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Eventitem from "./Eventitem";
-import axios from "axios";
+import useSWR from "swr";
+import {fetcher} from "./SwrHelper";
 
 export default function Eventlist() {
-  const [events, setEvents] = React.useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:3333/events")
-        .then(response => setEvents(response.data));
-  }, []);
+  const {isLoading, data: events} = useSWR("http://localhost:3333/events", fetcher);
 
   return (
     <div className="container" id="eventtable">
@@ -26,7 +22,7 @@ export default function Eventlist() {
           </thead>
           <tbody>
             {
-              events.map(event => (
+              events && events.map(event => (
                 <Eventitem event={event} key={event.id} />
               ))
             }
