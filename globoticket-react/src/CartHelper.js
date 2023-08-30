@@ -1,87 +1,87 @@
 import UuidStore from "./UuidStore";
+import axios from "axios";
 
 async function _getCart() {
-    const response = await fetch(
+    const response = await axios.get(
         "http://localhost:3333/cart", {
-            method: "GET",
-            headers: { 
+            headers: {
                 "X-SESSION-TOKEN": UuidStore.value
             }
         });
-    
-    let cart = await response.json();
+
+    let cart = response.data;
     return cart;
 }
 
 export function addCart(id) {
     return async function addCartThunk(dispatch, getState) {
-        await fetch(
-            "http://localhost:3333/cart", {
-                method: "POST",
-                headers: { 
+        await axios.post(
+            "http://localhost:3333/cart",
+            {
+                id: id,
+            },
+            {
+                headers: {
                     "Content-Type": "application/json",
                     "X-SESSION-TOKEN": UuidStore.value
-                },
-                body: JSON.stringify({
-                    id: id
-                })
+                }
             });
         let cart = await _getCart();
-        dispatch({ type: "refresh", payload: cart });
-    } 
+        dispatch({type: "refresh", payload: cart});
+    }
 }
 
 export function updateCart(id, quantity) {
     return async function updateCartThunk(dispatch, getState) {
         if (quantity === 0) {
-            await fetch(
-                "http://localhost:3333/cart", {
-                    method: "DELETE",
-                    headers: { 
+            await axios.delete(
+                "http://localhost:3333/cart",
+                {
+                    headers: {
                         "Content-Type": "application/json",
                         "X-SESSION-TOKEN": UuidStore.value
                     },
-                    body: JSON.stringify({
+                    data: {
                         id: id
-                    })
+                    }
                 });
         } else {
-            await fetch(
-                "http://localhost:3333/cart", {
-                    method: "PATCH",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "X-SESSION-TOKEN": UuidStore.value
-                    },
-                    body: JSON.stringify({
+            await axios.patch(
+                "http://localhost:3333/cart",
+                {
                         id: id,
                         quantity: quantity
-                    })
-                });    
+                    },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-SESSION-TOKEN": UuidStore.value
+                    }
+                });
         }
 
         let cart = await _getCart();
-        dispatch({ type: "refresh", payload: cart });
+        dispatch({type: "refresh", payload: cart});
     }
 }
 
 export function deleteCart(id) {
     return async function deleteCartThunk(dispatch, getState) {
-        await fetch(
-            "http://localhost:3333/cart", {
-                method: "DELETE",
-                headers: { 
+        await axios.delete(
+            "http://localhost:3333/cart",
+            {
+                headers: {
                     "Content-Type": "application/json",
                     "X-SESSION-TOKEN": UuidStore.value
                 },
-                body: JSON.stringify({
+                data: {
                     id: id
-                })
+                }
             });
-            
+
         let cart = await _getCart();
-        dispatch({ type: "refresh", payload: cart });
-    } 
+        dispatch({type: "refresh", payload: cart});
+    }
 }
 
 export function clearCart() {
@@ -89,13 +89,13 @@ export function clearCart() {
         await fetch(
             "http://localhost:3333/cart", {
                 method: "DELETE",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "X-SESSION-TOKEN": UuidStore.value
                 }
             });
-            
+
         let cart = await _getCart();
-        dispatch({ type: "refresh", payload: cart });
-    } 
+        dispatch({type: "refresh", payload: cart});
+    }
 }
